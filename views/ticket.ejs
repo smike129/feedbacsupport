@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Support Ticket</title>
+    <link rel="stylesheet" type="text/css" href="/styles/styles.css" />
+  </head>
+  <body>
+    <div class="ticket-details">
+      <h1>Support Ticket Details</h1>
+      <% if (ticket) { %>
+      <p>ID: <%= ticket.id %></p>
+      <p>Arrived: <%= ticket.arrived %></p>
+      <p>Customer: <%= ticket.customer %></p>
+      <p>Description: <%= ticket.description %></p>
+      <p>Handled: <%= ticket.handled ? ticket.handled : 'Not handled yet' %></p>
+      <p>Status: <%= ticket.status %></p>
+      <form action="/close-ticket" method="post">
+        <input type="hidden" name="ticketId" value="<%= ticket.id %>" />
+        <button type="submit">Close Ticket</button>
+      </form>
+      <form action="/reopen-ticket" method="post">
+        <input type="hidden" name="ticketId" value="<%= ticket.id %>" />
+        <button type="submit">Reopen Ticket</button>
+      </form>
+      <% } else { %>
+      <p>No ticket details available.</p>
+      <% } %>
+    </div>
+    <h2>Messages</h2>
+    <ul>
+      <% messages.forEach(message => { %>
+      <li>
+        <strong><%= message.sender %>:</strong> <%= message.message %> at <%=
+        message.timestamp %>
+      </li>
+      <% }) %>
+    </ul>
+    <form action="/reply" method="post">
+      <input type="hidden" name="ticketId" value="<%= ticket.id %>" />
+      <input type="hidden" name="reply_to" value="" />
+      <textarea
+        name="message"
+        placeholder="Write your reply here..."
+      ></textarea>
+      <button type="submit">Vastaa</button>
+    </form>
+    <div style="text-align: center">
+      <a href="/tickets" class="btn btn-primary">Back</a>
+    </div>
+  </body>
+</html>

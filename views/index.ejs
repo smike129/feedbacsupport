@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feedback Support</title>
+    <link rel="stylesheet" type="text/css" href="/styles/styles.css" />
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/feedback">Feedback</a></li>
+        <li><a href="/customers">Customers</a></li>
+        <li><a href="/tickets">Support Tickets</a></li>
+      </ul>
+    </nav>
+    <h1>Welcome to Feedback Support</h1>
+
+    <form action="/login" method="POST">
+      <input
+        type="text"
+        name="identifier"
+        placeholder="Enter your ID or email"
+        required
+      />
+      <button type="submit">Login</button>
+    </form>
+
+    <% if (typeof message !== 'undefined' && message) { %>
+    <p style="color: red"><%= message %></p>
+    <!-- Display the message -->
+    <% } %>
+  </body>
+</html>

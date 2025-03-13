@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customers & Users</title>
+    <link rel="stylesheet" type="text/css" href="/styles/styles.css" />
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/feedback">Feedback</a></li>
+        <li><a href="/customers">Customers</a></li>
+        <li><a href="/tickets">Support Tickets</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </nav>
+    <h1>Customers & Users</h1>
+    <h1>Asiakkaat ja käyttäjät</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Admin</th>
+          <th>Company</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% customers.forEach(customer => { %>
+        <tr>
+          <td><%= customer.id %></td>
+          <td><%= customer.name %></td>
+          <td><%= customer.email %></td>
+          <td><%= customer.admin ? 'Yes' : 'No' %></td>
+          <td><%= customer.company %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </body>
+</html>

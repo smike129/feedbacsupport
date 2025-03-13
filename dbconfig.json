@@ -1,0 +1,9 @@
+{
+    "host": "localhost",
+    "user": "root",
+    "password": "",
+    "database": "feedback_support",
+    "waitForConnections": true,
+    "connectionLimit": 10,
+    "queueLimit": 0
+}

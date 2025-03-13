@@ -5,8 +5,8 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import fs from "fs";
 import session from "express-session";
-
-const dbconfig = JSON.parse(fs.readFileSync("./dbconfig.json", "utf8"));
+import dbconfig from "./dbconfig.json"with { type: "json" };
+//const dbconfig = JSON.parse(fs.readFileSync("./dbconfig.json", "utf8"));
 const app = express();
 const PORT = 3000;
 
@@ -157,7 +157,7 @@ app.get("/tickets", requireLogin, async (req, res) => {
   }
 });
 
-app.get("/ticket", async (req, res) => {
+app.get("/ticket",requireLogin, async (req, res) => {
   const ticketId = req.query.id;
   if (!ticketId) {
     return res
@@ -219,7 +219,7 @@ app.get("/ticket", async (req, res) => {
   }
 });
 
-app.post("/reply", async (req, res) => {
+app.post("/reply",requireLogin, async (req, res) => {
   const { ticketId, message, reply_to } = req.body;
 
   const adminUserId = 1;
@@ -250,7 +250,7 @@ app.post("/reply", async (req, res) => {
   }
 });
 
-app.post("/close-ticket", async (req, res) => {
+app.post("/close-ticket",requireLogin, async (req, res) => {
   const { ticketId } = req.body;
 
   if (!ticketId) {
@@ -280,7 +280,7 @@ app.post("/close-ticket", async (req, res) => {
   }
 });
 
-app.post("/update-status", async (req, res) => {
+app.post("/update-status",requireLogin, async (req, res) => {
   const { ticketId, newStatus } = req.body;
 
   let connection;
@@ -317,7 +317,7 @@ app.post("/update-status", async (req, res) => {
   }
 });
 
-app.post("/reopen-ticket", async (req, res) => {
+app.post("/reopen-ticket",requireLogin, async (req, res) => {
   const { ticketId } = req.body;
 
   if (!ticketId) {

@@ -6,6 +6,7 @@ import { dirname } from "path";
 import fs from "fs";
 import session from "express-session";
 import dbconfig from "./dbconfig.json"with { type: "json" };
+import bcrypt from "bcrypt";
 //const dbconfig = JSON.parse(fs.readFileSync("./dbconfig.json", "utf8"));
 const app = express();
 const PORT = 3000;
@@ -37,11 +38,17 @@ const requireLogin = (req, res, next) => {
 };
 
 app.get("/", (req, res) => {
+  if (req.session.user) {
+    return res.redirect("/feedback");
+  }
   res.render("index.ejs", { user: req.session.user });
 });
 
 app.post("/login", async (req, res) => {
-  const { identifier } = req.body;
+  const { identifier, password } = req.body;
+  //debug
+  console.log("Identifier:", identifier);
+  console.log("Password:", password);
 
   const sql = `
     SELECT * FROM system_user 
@@ -49,16 +56,16 @@ app.post("/login", async (req, res) => {
 
   const [results] = await pool.execute(sql, [identifier, identifier]);
 
+  console.log("Results:", results);
+
   if (results.length > 0) {
     const user = results[0];
 
-    if (user.admin) {
+    if (user.password === password) {
       req.session.user = { id: user.id, username: user.fullname };
       return res.redirect("/feedback");
     } else {
-      return res.render("index.ejs", {
-        message: "Only admin users can log in.",
-      });
+      return res.render("index.ejs", { message: "Invalid password" });
     }
   } else {
     return res.render("index.ejs", { message: "Login not successful" });
@@ -357,3 +364,6 @@ app.listen(PORT, () => {
 // - https://github.com/pingcap/docs/blob/master/develop/dev-guide-sample-application-nodejs-mysql2.md
 // - https://blog.logrocket.com/creating-scalable-graphql-api-mysql-apollo-node/
 // - https://stackoverflow.com/questions/36049514/formatting-a-sql-server-datetime-into-y-m-d-hmos4-z-format-via-t-sql
+
+
+

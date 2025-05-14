@@ -31,13 +31,14 @@
         <% customers.forEach(customer => { %>
         <tr>
           <td><%= customer.id %></td>
-          <td><%= customer.name %></td>
+          <td><a href="/user/<%= customer.id %>"><%= customer.name %></a></td>
           <td><%= customer.email %></td>
           <td><%= customer.admin ? 'Yes' : 'No' %></td>
           <td><%= customer.company %></td>
         </tr>
         <% }) %>
       </tbody>
+      
     </table>
   </body>
 </html>

@@ -61,7 +61,8 @@ app.post("/login", async (req, res) => {
   if (results.length > 0) {
     const user = results[0];
 
-    if (user.password === password) {
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (passwordMatch) {
       req.session.user = { id: user.id, username: user.fullname };
       return res.redirect("/feedback");
     } else {
@@ -353,6 +354,70 @@ app.post("/reopen-ticket",requireLogin, async (req, res) => {
     }
   }
 });
+
+// Route to get user profile
+app.get("/user/:id", requireLogin, async (req, res) => {
+  const userId = req.params.id;
+
+  const sql = `SELECT * FROM system_user WHERE id = ?`;
+  const [results] = await pool.execute(sql, [userId]);
+
+  if (results.length > 0) {
+    const user = results[0];
+    res.render("userProfile.ejs", { user });
+  } else {
+    res.status(404).send("User not found");
+  }
+});
+
+// Route to update user profile
+app.post("/user/:id", requireLogin, async (req, res) => {
+  const userId = req.params.id;
+  const { fullname, email, password } = req.body;
+
+  console.log("Updating user:", userId);
+  console.log("New Full Name:", fullname);
+  console.log("New Email:", email);
+  console.log("New Password:", password); // Log the password input
+
+  let updateSql;
+  let params;
+  
+  if (password && password.trim() !== "") {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("Hashed Password:", hashedPassword);
+    updateSql = `UPDATE system_user SET fullname = ?, email = ?, password = ? WHERE id = ?`;
+    params = [fullname, email, hashedPassword, userId];
+  } else {
+    updateSql = `UPDATE system_user SET fullname = ?, email = ? WHERE id = ?`;
+    params = [fullname, email, userId];
+  }
+  
+  
+
+  try {
+    await pool.execute(updateSql, params);
+    console.log("User updated successfully");
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return res.render("index.ejs", { message: "Error updating user" });
+  }
+
+  // Verify the update
+  const [updatedResults] = await pool.execute(`SELECT * FROM system_user WHERE id = ?`, [userId]);
+  console.log("Updated User:", updatedResults);
+
+  res.redirect("/user/" + userId); // Redirect to the user profile page
+});
+
+pool.getConnection()
+  .then(connection => {
+    console.log("Database connected successfully");
+    connection.release();
+  })
+  .catch(err => {
+    console.error("Database connection failed:", err);
+  });
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
